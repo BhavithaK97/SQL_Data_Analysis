@@ -1,0 +1,102 @@
+#QUERY 1:List all customers with their total number of orders
+
+	SELECT c.customer_id,c.customer_name,count(o.order_id) Total_orders 
+	FROM customers1 c 
+	INNER JOIN orders1 o ON c.customer_id=o.customer_id
+ 	GROUP BY c.customer_id ORDER BY Total_orders desc;
+
+
+#QUERY 2:Show the total sales amount for each product category
+	
+	SELECT cat.category_name,sum(o.quantity*p.price) Total_Sales 
+	FROM orders1 o 
+	JOIN products p ON o.product_id=p.product_id 
+	JOIN categories cat ON cat.category_id=p.category_id 
+	GROUP BY cat.category_name 
+	ORDER BY Total_Sales desc;
+ 
+ 
+ #QUERY 3:Find the Top 5 Products by total sales amount
+
+ 	SELECT p.product_name,sum(o.quantity*p.price) Sales_amount
+ 	FROM orders1 o 
+	JOIN products p ON o.product_id=p.product_id 
+	GROUP BY p.product_name
+	ORDER BY Sales_amount desc limit 5;
+ 
+
+ #QUERY 4:Show all orders placed before 10th july 2025
+
+ 	SELECT *
+	FROM orders1 
+	WHERE order_date<'2025-07-10';
+
+
+ #QUERY 5:Calculated the average order value per customer
+
+	SELECT c.customer_name,round(avg(o.quantity*p.price),0) Avg_Order_Value 
+	FROM customers1 c 
+	JOIN orders1 o ON c.customer_id=o.customer_id
+	JOIN products p ON o.product_id=p.product_id
+	GROUP BY c.customer_name
+ 	ORDER BY Avg_Order_Value desc;
+ 
+
+ #QUERY 6:List the customers who spent more than 1000 in total
+ 	
+	SELECT c.customer_name,sum(o.quantity*p.price) Total_Spent
+ 	FROM customers1 c join orders1 o ON c.customer_id=o.customer_id
+ 	JOIN products p ON p.product_id=o.product_id
+ 	GROUP BY c.customer_name 
+	HAVING sum(o.quantity*p.price)>1000;
+ 
+
+ #QUERY 7:Find products that have never been ordered
+
+	SELECT p.product_name 
+	FROM products p 
+	LEFT JOIN orders1 o ON p.product_id=o.product_id 
+	WHERE o.order_id is null ;
+
+ 
+
+#QUERY 8:Find the product(s) with the highest number of orders placed
+
+	SELECT p.product_name,count(*) as order_count
+	FROM  orders1 o
+	JOIN products p ON o.product_id=p.product_id
+	GROUP BY p.product_name
+	HAVING count(*)=(SELECT MAX(Product_orders) 
+			 FROM (
+				SELECT COUNT(*) AS Product_orders FROM orders1 GROUP BY product_id) AS counts
+			);
+
+
+#QUERY 9:Create a view summarizing sales by product category with total sales and total customers
+	
+	CREATE VIEW category_sales_summary AS 
+ 	SELECT cat.category_name,sum(o.quantity*p.price) Total_Sales,count(distinct o.customer_id) Unique_Customers from orders1 o 
+	JOIN products p ON o.product_id=p.product_id 
+	JOIN categories cat ON cat.category_id=p.category_id 
+	GROUP BY cat.category_name;
+ 	SELECT * FROM category_sales_summary;
+
+ 
+ 
+ #QUERY 10:Find customers whose total spending is above the average spending of all customers
+
+	SELECT c.customer_name, SUM(o.quantity * p.price) AS total_spent
+	FROM customers1 c
+	JOIN orders1 o ON c.customer_id = o.customer_id
+	JOIN products p ON o.product_id = p.product_id
+	GROUP BY c.customer_name
+	HAVING total_spent > (
+   	SELECT AVG(total_spent)
+    	FROM (
+       		 SELECT SUM(o1.quantity*p.price) AS total_spent
+        	FROM orders1 o1
+        	JOIN products p ON o1.product_id = p.product_id
+        	GROUP BY o1.customer_id
+    		) AS customer_totals
+	);
+ 
