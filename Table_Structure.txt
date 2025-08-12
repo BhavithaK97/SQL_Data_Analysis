@@ -1,0 +1,62 @@
+##Creating Tables
+
+CREATE TABLE customers1 (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    city VARCHAR(50)
+);
+
+CREATE TABLE categories (
+    category_id INT PRIMARY KEY,
+    category_name VARCHAR(50)
+);
+
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(100),
+    category_id INT,
+    price DECIMAL(10,2),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+CREATE TABLE orders1 (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    product_id INT,
+    order_date DATE,
+    quantity INT,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+##Insert data into Tables
+
+INSERT INTO customers1 VALUES
+(1, 'Alice Johnson', 'New York'),
+(2, 'Bob Smith', 'Los Angeles'),
+(3, 'Carol White', 'Chicago'),
+(4, 'David Lee', 'Houston'),
+(5, 'Eva Green', 'Miami');
+
+INSERT INTO categories VALUES
+(1, 'Electronics'),
+(2, 'Clothing'),
+(3, 'Home & Garden');
+
+INSERT INTO products VALUES
+(101, 'Laptop', 1, 1000.00),
+(102, 'Smartphone', 1, 700.00),
+(103, 'T-Shirt', 2, 20.00),
+(104, 'Jeans', 2, 40.00),
+(105, 'Coffee Maker', 3, 80.00),
+(106, 'Lawn Mower', 3, 150.00);
+
+INSERT INTO orders1 VALUES
+(1001, 1, 101, '2025-07-01', 1),
+(1002, 2, 103, '2025-07-02', 3),
+(1003, 1, 104, '2025-07-05', 2),
+(1004, 3, 102, '2025-07-07', 1),
+(1005, 4, 105, '2025-07-08', 1),
+(1006, 5, 106, '2025-07-10', 1),
+(1007, 2, 101, '2025-07-12', 1);
+
