@@ -1,4 +1,4 @@
-# SQL Data Analysis Task 4
+# SQL Data Analysis
 
 This repository contains the work completed as part of my **internship task** on SQL data analysis.
 
